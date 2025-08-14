@@ -1,0 +1,46 @@
+First I create a Virtual Environment:
+py -m venv myenv
+
+Then I activate the Virtual Environment:
+myenv\Scripts\Activate.ps1
+
+I install 4 packages: selenium, pytest, pytest-html & webdriver-manager
+pip install selenium pytest pytest-html webdriver-manager
+
+
+I save the dependencies to a requirements file with:
+pip freeze > requirements.txt
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+
+wrote the selenium code in tests\test_login_ui.py
+
+executed it with:
+pytest .\tests\test_login_ui.py --html=myreport.html --self-contained-html
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+let's put this repo on github now.
+
+made sure git is installed with git --version
+
+set my identity (so that git can stamp my identity on my commits)
+git config --global user.name  "Your Name"
+git config --global user.email "you@example.com"
+
+initialize a git repository (Why: This creates a hidden .git folder that tracks changes.):
+git init
+
+
+
+
+
+
+
+
+
+
+
