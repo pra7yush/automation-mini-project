@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+
+    environment {
+        VENV_DIR = "venv"  // Virtual environment folder
+        REPORT_DIR = "reports" // Folder to store pytest-html reports
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Pull latest code from GitHub
+                git branch: 'main', url: 'https://github.com/your-username/your-repo.git'
+            }
+        }
+
+        stage('Setup Environment') {
+            steps {
+                // Create Python virtual environment
+                sh 'python3 -m venv ${VENV_DIR}'
+                sh """
+                    source ${VENV_DIR}/bin/activate
+                    python --version
+                """
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                // Activate venv and install dependencies
+                sh """
+                    source ${VENV_DIR}/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                    pip install pytest pytest-html selenium webdriver-manager
+                """
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                // Run Selenium tests and generate HTML report
+                sh """
+                    source ${VENV_DIR}/bin/activate
+                    mkdir -p ${REPORT_DIR}
+                    pytest automation_mini_project/tests/test_login_ui.py --html=${REPORT_DIR}/report.html --self-contained-html
+                """
+            }
+        }
+
+        stage('Archive Reports') {
+            steps {
+                // Archive the HTML reports in Jenkins
+                archiveArtifacts artifacts: "${REPORT_DIR}/*.html", allowEmptyArchive: false
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up virtual environment...'
+            sh 'rm -rf ${VENV_DIR}'
+        }
+        success {
+            echo 'Tests completed successfully!'
+        }
+        failure {
+            echo 'Some tests failed. Check reports for details.'
+        }
+    }
+}
